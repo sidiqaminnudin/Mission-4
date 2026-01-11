@@ -1,40 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>To Do</title>
 </head>
+
 <body>
-    <head>
+  <div class="container">
+    <!-- Profile Card -->
+    <div class="warp-profile card">
+      <div class="profile">
+        <!-- versi avatar inisial seperti screenshot -->
+        <div class="avatar">JD</div>
 
-        <img src="img/pp.png" alt="Profile Picture">
-        <h2>John Doe</h2>
-        <h3>Senior Project Manager</h3>
-        
-        <p>Saturday, January 10, 2026</p>
-        <p>hh:mm:ss</p>
-        
-    </head> 
-    <main>
-        <h2>Create New Task </h2>
-        <p>Task Description</p>
-        <input type="text">
+        <div class="profile-info">
+          <h2>John Doe</h2>
+          <h3>Senior Project Manager</h3>
+        </div>
+      </div>
 
-        <p>Priority</p>
-        <button>Low</button>
-        <button>Medium</button>
-        <button>High</button>
-        
-        <p>Due Date</p>
-        <input type="date">
+      <div class="date">
+        <p>Sunday, January 11, 2026</p>
+        <p class="time">04:54:54 PM</p>
+      </div>
+    </div>
 
-        <button>Add Task</button>
+    <!-- Task Card -->
+    <div class="task card">
+      <h2 class="card-title">Create New Task</h2>
 
-        <button>To do</button>
-        <button>done</button>
-    </main>
-    
+      <label class="label">Task Description</label>
+      <textarea rows="4" placeholder="Enter your task here..."></textarea>
+
+      <label class="label">Priority Level</label>
+      <div class="priority">
+        <button class="pill low active" type="button">Low</button>
+        <button class="pill medium" type="button">Medium</button>
+        <button class="pill high" type="button">High</button>
+      </div>
+
+      <label class="label">Deadline (Optional)</label>
+      <input type="date" />
+
+      <button class="btn-primary">Add Task</button>
+    </div>
+
+    <!-- Tabs + List -->
+    <div class="card tabs-card">
+      <div class="tabs">
+        <button class="tab active" type="button">To Do</button>
+        <button class="tab" type="button">Done</button>
+      </div>
+
+      <div class="empty">
+        <p>No tasks yet</p>
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>
