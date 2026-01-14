@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css">
-    <title>To Do</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>To Do</title>
 </head>
 
 <body>
@@ -33,12 +33,12 @@
       <h2 class="card-title">Create New Task</h2>
 
       <label class="label">Task Description</label>
-      <textarea rows="4" placeholder="Enter your task here..."></textarea>
+      <textarea rows="5" placeholder="Enter your task here..."></textarea>
 
       <label class="label">Priority Level</label>
       <div class="priority">
-        <button class="pill low active" type="button">Low</button>
-        <button class="pill medium" type="button">Medium</button>
+        <button class="pill low" type="button">Low</button>
+        <button class="pill medium active" type="button">Medium</button>
         <button class="pill high" type="button">High</button>
       </div>
 
@@ -53,13 +53,17 @@
       <div class="tabs">
         <button class="tab active" type="button">To Do</button>
         <button class="tab" type="button">Done</button>
+
+        <div class="list todo-list"></div>
+        <div class="list done-list" style="display:none"></div>
+
       </div>
 
       <div class="empty">
-        <p>No tasks yet</p>
       </div>
     </div>
   </div>
 </body>
+<script src="/js/script.js"></script>
 
 </html>
