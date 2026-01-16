@@ -1,17 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Outfit', sans-serif;
   background-color: #fcfff5;
 }
 
-/* bikin tampilan mobile centered seperti screenshot */
 .container {
   width: 100%;
   max-width: 420px;
@@ -28,23 +23,12 @@ body {
   margin-bottom: 14px;
 }
 
-/* Profile */
-.warp-profile {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+/* ===== Profile ===== */
+.warp-profile { display: flex; flex-direction: column; gap: 20px; }
+.profile { display: flex; align-items: center; gap: 15px; }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-/* Avatar inisial */
 .avatar {
-  width: 52px;
-  height: 52px;
+  width: 52px; height: 52px;
   border-radius: 50%;
   background: #1E2A78;
   color: #fff;
@@ -55,32 +39,13 @@ body {
   font-size: 1.2rem;
 }
 
-.profile-info h2 {
-  font-size: 1.2rem;
-  color: #111827;
-  line-height: 1.2;
-}
+.profile-info h2 { font-size: 1.2rem; color: #111827; line-height: 1.2; }
+.profile-info h3 { font-size: 1rem; font-weight: 500; color: #6B7280; margin-top: 2px; }
 
-.profile-info h3 {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #6B7280;
-  margin-top: 2px;
-}
+.date { font-size: 1rem; color: #6B7280; line-height: 1.35; }
+.date .time { font-size: 0.8rem; margin-top: 10px; }
 
-.date {
-  font-size: 1rem;
-  color: #6B7280;
-  line-height: 1.35;
-  gap: 20px;
-}
-
-.date .time {
-  font-size: 0.8rem;
-  margin-top: 10px;
-}
-
-/* Task */
+/* ===== Task Form ===== */
 .task .card-title {
   font-size: 1.5rem;
   font-weight: 400;
@@ -130,7 +95,7 @@ input[type="date"]:focus {
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 }
 
-/* Priority pills */
+/* Priority pills (untuk pilih) */
 .priority {
   display: flex;
   gap: 10px;
@@ -148,34 +113,31 @@ input[type="date"]:focus {
 }
 
 .pill.low { background: #22c55e33; color: #22c55e; }
-.pill.low.active {background: rgb(34, 197, 94); color: #fff;box-shadow: 0 4px 8px rgba(34, 197, 94,0.4); transition: box-shadow 0.3s ease; }
 .pill.medium { background: #eab30833; color: #eab308; }
-.pill.medium.active { background: #eab308; color: #fff; box-shadow: 0 4px 8px rgba(255, 204, 0,0.4);transition: box-shadow 0.3s ease; }
 .pill.high { background: #FECACA; color: #991B1B; }
-.pill.high.active { background: #e53935; color: #fff; box-shadow: 0 4px 8px rgba(229, 57, 53,0.4);transition: box-shadow 0.3s ease; }
-/* Primary button */
+
+.pill.low.active { background: rgb(34, 197, 94); color: #fff; box-shadow: 0 4px 8px rgba(34, 197, 94,0.4); }
+.pill.medium.active { background: #eab308; color: #fff; box-shadow: 0 4px 8px rgba(255, 204, 0,0.4); }
+.pill.high.active { background: #e53935; color: #fff; box-shadow: 0 4px 8px rgba(229, 57, 53,0.4); }
+
+/* Add button */
 .btn-primary {
   margin-top: 12px;
   width: 100%;
   border: 0;
   border-radius: 10px;
   padding: 12px 14px;
-  background: #F97316; /* orange */
+  background: #F97316;
   color: #fff;
   font-weight: 800;
   font-size: 12px;
   cursor: pointer;
 }
 
-.btn-primary:active {
-  transform: translateY(1px);
-}
+.btn-primary:active { transform: translateY(1px); }
 
-/* Tabs Card */
-.tabs-card {
-  padding: 0;
-  overflow: hidden;
-}
+/* ===== Tabs ===== */
+.tabs-card { padding: 0; overflow: hidden; }
 
 .tabs {
   display: grid;
@@ -184,7 +146,7 @@ input[type="date"]:focus {
 
 .tab {
   border: 0;
-  padding: 12px 60px;
+  padding: 12px 10px;
   background: #fff;
   font-weight: 800;
   font-size: 12px;
@@ -197,9 +159,114 @@ input[type="date"]:focus {
   color: #fff;
 }
 
+/* Panel area bawah tab (full width) */
+.tab-panels { padding: 12px; }
+
 .empty {
   padding: 18px 16px;
   text-align: center;
   color: #9CA3AF;
   font-size: 12px;
 }
+
+/* ===== Task List ===== */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* tiap item */
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.task-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;             /* biar teks dapat ruang */
+  min-width: 0;        /* penting supaya wrap bener */
+}
+
+.task-left input {
+  margin-top: 3px;
+  flex: 0 0 auto;
+}
+
+/* blok teks */
+.task-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-text p {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.35;
+
+  /* ini kunci biar teks panjang rapi */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  margin-bottom: 6px;
+}
+
+.task-text.done p {
+  text-decoration: line-through;
+  color: #9CA3AF;
+}
+
+/* meta bawah (deadline + overdue + badge) */
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.deadline-text {
+  font-size: 10px;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.overdue-text {
+  font-size: 10px;
+  font-weight: 800;
+  color: #EF4444;
+}
+
+/* badge priority (UNTUK LIST) — tidak bentrok dengan .priority pills */
+.badge-priority {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.badge-priority.low { background: #D1FAE5; color: #065F46; }
+.badge-priority.medium { background: #FDE68A; color: #92400E; }
+.badge-priority.high { background: #FECACA; color: #991B1B; }
+
+/* delete button */
+.delete-btn {
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: #9CA3AF;
+  flex: 0 0 auto;
+}
+
+.delete-btn:hover { color: #EF4444; }
