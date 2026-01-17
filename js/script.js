@@ -1,5 +1,5 @@
 /* ========= CONFIG ========= */
-const STORAGE_KEY = "todo_tasks_v1";
+const STORAGE_KEY = "todo_tasks_v2";
 
 /* ========= ELEMENTS ========= */
 const textarea = document.querySelector("textarea");
@@ -7,21 +7,51 @@ const addBtn = document.querySelector(".btn-primary");
 const pillButtons = document.querySelectorAll(".pill");
 const deadlineInput = document.querySelector('input[type="date"]');
 
+const dateEl = document.querySelector(".current-date");
+const timeEl = document.querySelector(".current-time");
+
 const tabs = document.querySelectorAll(".tab");
 const todoList = document.querySelector(".todo-list");
 const doneList = document.querySelector(".done-list");
 const emptyEl = document.querySelector(".empty");
+const deleteAllBtn = document.querySelector(".btn-delete-all");
 
 /* ========= STATE ========= */
-let selectedPriority = getInitialPriority(); // dari pill yang active
+let selectedPriority = getInitialPriority();
 let tasks = loadTasks();
-let activeTab = "todo"; // default
+let activeTab = "todo";
 
 /* ========= INIT ========= */
-render();
+initDateTime();
 bindEvents();
+switchTab("todo");
+render();
 
-/* ========= FUNCTIONS ========= */
+/* ========= DATE/TIME ========= */
+function initDateTime() {
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+}
+
+function updateDateTime() {
+  if (!dateEl || !timeEl) return;
+
+  const now = new Date();
+  dateEl.textContent = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+
+  timeEl.textContent = now.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+/* ========= EVENTS ========= */
 function bindEvents() {
   // Priority pills
   pillButtons.forEach(btn => {
@@ -33,27 +63,30 @@ function bindEvents() {
   });
 
   // Add task
-  addBtn.addEventListener("click", () => {
+  addBtn?.addEventListener("click", () => {
     const text = textarea.value.trim();
     if (!text) return;
+
+    const now = new Date();
+    const startDate = toYMD(now);
+    const dueDate = deadlineInput.value ? deadlineInput.value : startDate;
 
     const task = {
       id: Date.now(),
       text,
-      priority: selectedPriority, // Low/Medium/High
-      deadline: deadlineInput.value || "", // "YYYY-MM-DD" atau ""
-      done: false,
-      createdAt: new Date().toISOString()
+      priority: selectedPriority,
+      startISO: now.toISOString(), // untuk data lengkap (opsional)
+      startDate,                   // YYYY-MM-DD (lokal)
+      dueDate,                     // YYYY-MM-DD (lokal)
+      done: false
     };
 
     tasks.push(task);
     saveTasks();
 
-    // reset form
     textarea.value = "";
     deadlineInput.value = "";
 
-    // setelah add, pastikan tab To Do aktif
     switchTab("todo");
     render();
   });
@@ -66,8 +99,21 @@ function bindEvents() {
       render();
     });
   });
+
+  // Delete all
+  deleteAllBtn?.addEventListener("click", () => {
+    if (tasks.length === 0) return;
+
+    const ok = confirm("Delete all tasks?");
+    if (!ok) return;
+
+    tasks = [];
+    saveTasks();
+    render();
+  });
 }
 
+/* ========= TAB SWITCH ========= */
 function switchTab(tabName) {
   activeTab = tabName;
 
@@ -75,68 +121,55 @@ function switchTab(tabName) {
   const activeBtn = [...tabs].find(t => t.dataset.tab === tabName);
   if (activeBtn) activeBtn.classList.add("active");
 
-  // tampilkan list sesuai tab (tanpa inline style tambahan selain display)
-  todoList.style.display = tabName === "todo" ? "flex" : "none";
-  doneList.style.display = tabName === "done" ? "flex" : "none";
+  // show/hide lists
+  if (todoList) todoList.style.display = tabName === "todo" ? "flex" : "none";
+  if (doneList) doneList.style.display = tabName === "done" ? "flex" : "none";
 }
 
+/* ========= RENDER ========= */
 function render() {
-  // bersihkan list
+  if (!todoList || !doneList) return;
+
   todoList.innerHTML = "";
   doneList.innerHTML = "";
 
   const todoTasks = tasks.filter(t => !t.done);
   const doneTasks = tasks.filter(t => t.done);
 
-  // empty state: hanya muncul saat tab todo aktif & todo kosong
-  if (activeTab === "todo" && todoTasks.length === 0) {
-    emptyEl.style.display = "block";
-  } else {
-    emptyEl.style.display = "none";
+  // empty state only for todo tab
+  if (emptyEl) {
+    emptyEl.style.display = activeTab === "todo" && todoTasks.length === 0 ? "block" : "none";
   }
 
-  // render todo
-  todoTasks.forEach(task => {
-    todoList.appendChild(createTaskItem(task));
-  });
-
-  // render done
-  doneTasks.forEach(task => {
-    doneList.appendChild(createTaskItem(task));
-  });
+  todoTasks.forEach(task => todoList.appendChild(createTaskItem(task)));
+  doneTasks.forEach(task => doneList.appendChild(createTaskItem(task)));
 }
 
 function createTaskItem(task) {
   const item = document.createElement("div");
   item.className = "task-item";
 
-  const isOverdue = getIsOverdue(task);
-
-  // meta line (badge + deadline + overdue)
-  const deadlineHtml = task.deadline
-    ? `<span class="deadline-text">${escapeHtml(task.deadline)}</span>`
-    : "";
-
-  const overdueHtml = isOverdue
-    ? `<span class="overdue-text">OVERDUE</span>`
-    : "";
+  const overdue = isOverdue(task);
 
   item.innerHTML = `
     <div class="task-left">
       <input type="checkbox" ${task.done ? "checked" : ""} />
       <div class="task-text ${task.done ? "done" : ""}">
         <p>${escapeHtml(task.text)}</p>
+
         <div class="task-meta">
           <span class="badge-priority ${task.priority.toLowerCase()}">${escapeHtml(task.priority)}</span>
-          ${deadlineHtml}
-          ${overdueHtml}
+          <span class="time-start">Start: ${formatDateYMD(task.startDate)}</span>
+          <span class="time-deadline">Due: ${formatDateYMD(task.dueDate)}</span>
+          ${overdue ? `<span class="overdue-text">OVERDUE</span>` : ""}
         </div>
       </div>
     </div>
+
     <button class="delete-btn" type="button" aria-label="Delete task">✕</button>
   `;
 
-  // events: checkbox toggle
+  // checkbox
   const checkbox = item.querySelector('input[type="checkbox"]');
   checkbox.addEventListener("change", e => {
     task.done = e.target.checked;
@@ -144,9 +177,9 @@ function createTaskItem(task) {
     render();
   });
 
-  // events: delete
-  const deleteBtn = item.querySelector(".delete-btn");
-  deleteBtn.addEventListener("click", () => {
+  // delete single
+  const delBtn = item.querySelector(".delete-btn");
+  delBtn.addEventListener("click", () => {
     tasks = tasks.filter(t => t.id !== task.id);
     saveTasks();
     render();
@@ -155,21 +188,42 @@ function createTaskItem(task) {
   return item;
 }
 
-/* ========= HELPERS ========= */
-function getIsOverdue(task) {
-  if (!task.deadline) return false;
+/* ========= DATE HELPERS (timezone-safe) ========= */
+function toYMD(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function parseLocalDate(ymd, endOfDay = false) {
+  const [y, m, d] = String(ymd).split("-").map(Number);
+  if (!y || !m || !d) return new Date(NaN);
+  return endOfDay
+    ? new Date(y, m - 1, d, 23, 59, 59, 999)
+    : new Date(y, m - 1, d, 0, 0, 0, 0);
+}
+
+function formatDateYMD(ymd) {
+  const dt = parseLocalDate(ymd, false);
+  return dt.toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function isOverdue(task) {
+  if (!task?.dueDate) return false;
   if (task.done) return false;
 
-  // deadline dianggap sampai akhir hari
-  const endOfDay = new Date(task.deadline + "T23:59:59");
-  return endOfDay < new Date();
+  const dueEnd = parseLocalDate(task.dueDate, true);
+  if (Number.isNaN(dueEnd.getTime())) return false;
+
+  return dueEnd < new Date();
 }
 
-function getInitialPriority() {
-  const active = document.querySelector(".pill.active");
-  return active ? active.textContent.trim() : "Low";
-}
-
+/* ========= STORAGE ========= */
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
@@ -178,12 +232,16 @@ function loadTasks() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     const data = raw ? JSON.parse(raw) : [];
-    // validasi ringan
-    if (!Array.isArray(data)) return [];
-    return data;
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
+}
+
+/* ========= OTHER HELPERS ========= */
+function getInitialPriority() {
+  const active = document.querySelector(".pill.active");
+  return active ? active.textContent.trim() : "Low";
 }
 
 function escapeHtml(str) {

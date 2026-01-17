@@ -269,4 +269,30 @@ input[type="date"]:focus {
   flex: 0 0 auto;
 }
 
+.time-start,
+.time-deadline {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+
 .delete-btn:hover { color: #EF4444; }
+
+.btn-delete-all {
+  width: 100%;
+  border: 1px solid #EF4444;
+  background: #fff;
+  color: #EF4444;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-delete-all:hover {
+  background: #FEE2E2;
+}
+
